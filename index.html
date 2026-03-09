@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form Lokasi</title>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+padding:30px;
+}
+button{
+padding:12px 20px;
+font-size:16px;
+margin:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Pendataan Lokasi</h2>
+
+<input id="nama" placeholder="Masukkan Nama"><br><br>
+
+<button onclick="ambilLokasi()">📍 Ambil GPS</button>
+<p id="koordinat"></p>
+
+<input type="file" accept="image/*" capture="environment">
+
+<br><br>
+
+<button onclick="kirimForm()">Kirim Data</button>
+
+<script>
+
+let lat, lon;
+
+function ambilLokasi(){
+navigator.geolocation.getCurrentPosition(function(pos){
+
+lat = pos.coords.latitude;
+lon = pos.coords.longitude;
+
+document.getElementById("koordinat").innerHTML =
+"Koordinat: "+lat+","+lon;
+
+});
+}
+
+function kirimForm(){
+
+let nama = document.getElementById("nama").value;
+
+let koordinat = lat + "," + lon;
+
+let maps = "https://maps.google.com/?q=" + koordinat;
+
+let url =
+"https://docs.google.com/forms/d/e/FORM_ID/viewform?usp=pp_url"+
+"&entry.111111="+encodeURIComponent(nama)+
+"&entry.222222="+encodeURIComponent(koordinat)+
+"&entry.333333="+encodeURIComponent(maps);
+
+window.location.href = url;
+
+}
+
+</script>
+
+</body>
+</html>
