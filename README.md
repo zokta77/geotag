@@ -1,2 +1,0 @@
-# geotag
-GeoTag
