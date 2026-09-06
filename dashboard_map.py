@@ -19,50 +19,71 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Jarak bagian atas diperbesar agar judul tidak tertutup header Streamlit */
+    /*
+    ==========================================================
+    THEME-AWARE UI
+    Semua panel memakai CSS variable bawaan Streamlit sehingga
+    otomatis menyesuaikan saat pengguna memilih Light / Dark.
+    ==========================================================
+    */
+
     .block-container {
-        padding-top: 3.2rem !important;
+        padding-top: 3.6rem !important;
         padding-bottom: 2.5rem;
         max-width: 1550px;
     }
 
+    /* Sidebar mengikuti warna secondary background theme */
     [data-testid="stSidebar"] {
-        background: #f4f7fb;
+        background: var(--secondary-background-color);
+        border-right: 1px solid rgba(128, 128, 128, 0.18);
     }
 
+    /* KPI Cards */
     [data-testid="stMetric"] {
-        background: #ffffff;
-        border: 1px solid #e4eaf2;
+        background: var(--secondary-background-color);
+        color: var(--text-color);
+        border: 1px solid rgba(128, 128, 128, 0.22);
         padding: 14px 16px;
         border-radius: 14px;
-        box-shadow: 0 2px 10px rgba(16, 24, 40, 0.05);
+        box-shadow: 0 3px 14px rgba(0, 0, 0, 0.10);
+    }
+
+    [data-testid="stMetricLabel"],
+    [data-testid="stMetricValue"] {
+        color: var(--text-color) !important;
     }
 
     [data-testid="stMetricLabel"] {
         font-weight: 600;
+        opacity: 0.82;
     }
 
+    /* Judul utama */
     .dashboard-title {
         font-size: clamp(1.8rem, 3vw, 2.35rem);
         line-height: 1.25;
         font-weight: 800;
         margin: 0 0 0.35rem 0;
         padding-top: 0.25rem;
-        color: #152238;
+        color: var(--text-color);
     }
 
     .dashboard-subtitle {
-        color: #667085;
+        color: var(--text-color);
+        opacity: 0.68;
         margin: 0 0 1.2rem 0;
         font-size: 0.98rem;
     }
 
+    /* Kartu informasi titik */
     .selected-card {
-        background: #ffffff;
-        border: 1px solid #dce5ef;
+        background: var(--secondary-background-color);
+        color: var(--text-color);
+        border: 1px solid rgba(128, 128, 128, 0.24);
         border-radius: 16px;
         padding: 18px 20px;
-        box-shadow: 0 3px 14px rgba(16, 24, 40, 0.06);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
         margin-top: 0.4rem;
         margin-bottom: 0.8rem;
     }
@@ -70,18 +91,20 @@ st.markdown(
     .selected-name {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #152238;
+        color: var(--text-color);
         margin-bottom: 4px;
     }
 
     .selected-subtitle {
-        color: #667085;
+        color: var(--text-color);
+        opacity: 0.68;
         font-size: 0.92rem;
         margin-bottom: 8px;
     }
 
     .detail-label {
-        color: #667085;
+        color: var(--text-color);
+        opacity: 0.62;
         font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 0.03em;
@@ -90,13 +113,52 @@ st.markdown(
 
     .detail-value {
         font-weight: 650;
-        color: #1f2937;
+        color: var(--text-color);
         margin-bottom: 9px;
     }
 
+    /* Input, multiselect, selectbox mengikuti dark mode */
+    [data-baseweb="select"] > div,
+    [data-baseweb="input"] > div,
+    [data-testid="stTextInput"] input {
+        background-color: var(--secondary-background-color) !important;
+        color: var(--text-color) !important;
+    }
+
+    /* Dataframe & expander */
+    [data-testid="stExpander"],
+    [data-testid="stDataFrame"] {
+        border-color: rgba(128, 128, 128, 0.20);
+    }
+
+    /* Link button */
     div[data-testid="stLinkButton"] a {
         border-radius: 10px;
         font-weight: 650;
+    }
+
+    /* Code box koordinat */
+    [data-testid="stCodeBlock"] {
+        border: 1px solid rgba(128, 128, 128, 0.20);
+        border-radius: 10px;
+    }
+
+    /* Divider lebih halus di dark mode */
+    hr {
+        border-color: rgba(128, 128, 128, 0.20) !important;
+    }
+
+    /* Tooltip Plotly tetap terbaca */
+    .js-plotly-plot .plotly .hoverlayer .hovertext {
+        font-family: inherit !important;
+    }
+
+    /* Tambahan untuk browser/system dark mode sebagai fallback */
+    @media (prefers-color-scheme: dark) {
+        [data-testid="stMetric"],
+        .selected-card {
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+        }
     }
     </style>
     """,
@@ -227,7 +289,35 @@ def fmt_int(value) -> str:
 
 
 def make_map_style(style_name: str):
-    """Basemap satelit/hybrid tanpa Google/Mapbox API key."""
+    """Basemap tanpa Google/Mapbox API key."""
+    if style_name == "Dark Map":
+        return {
+            "version": 8,
+            "sources": {
+                "dark_base": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://server.arcgisonline.com/ArcGIS/rest/services/"
+                        "Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+                    ],
+                    "tileSize": 256,
+                    "attribution": "Tiles © Esri",
+                },
+                "dark_ref": {
+                    "type": "raster",
+                    "tiles": [
+                        "https://server.arcgisonline.com/ArcGIS/rest/services/"
+                        "Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+                    ],
+                    "tileSize": 256,
+                },
+            },
+            "layers": [
+                {"id": "dark-base", "type": "raster", "source": "dark_base"},
+                {"id": "dark-reference", "type": "raster", "source": "dark_ref"},
+            ],
+        }
+
     if style_name == "Satellite + Label":
         return {
             "version": 8,
@@ -371,7 +461,7 @@ st.markdown(
 # ============================================================
 # SIDEBAR / FILTER
 # ============================================================
-st.sidebar.title("🗺️ Dashboard")
+st.sidebar.title("🗺️ Kontrol Dashboard")
 st.sidebar.caption("Filter data dan pengaturan tampilan peta.")
 
 st.sidebar.subheader("Filter Data")
@@ -403,8 +493,9 @@ color_by = st.sidebar.radio(
 
 map_style_name = st.sidebar.selectbox(
     "Gaya peta",
-    ["Satellite + Label", "Satellite", "OpenStreetMap"],
+    ["Satellite + Label", "Dark Map", "Satellite", "OpenStreetMap"],
     index=0,
+    help="Pilih Dark Map jika dashboard sedang menggunakan tema gelap.",
 )
 
 map_style = make_map_style(map_style_name)
@@ -713,8 +804,10 @@ with left:
         xaxis_title="Jumlah",
         yaxis_title=None,
         showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
     )
-    st.plotly_chart(fig_status, use_container_width=True)
+    st.plotly_chart(fig_status, use_container_width=True, theme="streamlit")
 
 with right:
     st.subheader("Jenis Bangunan")
@@ -739,8 +832,10 @@ with right:
         xaxis_title="Jumlah",
         yaxis_title=None,
         showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
     )
-    st.plotly_chart(fig_bang, use_container_width=True)
+    st.plotly_chart(fig_bang, use_container_width=True, theme="streamlit")
 
 
 # ============================================================
