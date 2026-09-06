@@ -569,7 +569,7 @@ hover_data = {
     "_point_id": False,
 }
 
-fig = px.scatter_mapbox(
+fig = px.scatter_map(
     valid_map,
     lat="geotag_latitude",
     lon="geotag_longitude",
@@ -605,7 +605,7 @@ else:
     highlight_lon = []
 
 fig.add_trace(
-    go.Scattermapbox(
+    go.Scattermap(
         lat=highlight_lat,
         lon=highlight_lon,
         mode="markers",
@@ -615,7 +615,7 @@ fig.add_trace(
     )
 )
 fig.add_trace(
-    go.Scattermapbox(
+    go.Scattermap(
         lat=highlight_lat,
         lon=highlight_lon,
         mode="markers",
