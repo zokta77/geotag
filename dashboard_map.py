@@ -371,7 +371,7 @@ st.markdown(
 # ============================================================
 # SIDEBAR / FILTER
 # ============================================================
-st.sidebar.title("🗺️ Kontrol Dashboard")
+st.sidebar.title("🗺️ Dashboard")
 st.sidebar.caption("Filter data dan pengaturan tampilan peta.")
 
 st.sidebar.subheader("Filter Data")
