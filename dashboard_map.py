@@ -118,13 +118,13 @@ REQUIRED_COLUMNS = [
     "sls",
     "kode_sub_sls",
     "jenis_prelist",
-    # "kode_bang_label",
+    "kode_bang_label",
     "no_bang",
     "geotag_latitude",
     "geotag_longitude",
     "assignment_status_alias",
-    # "sumber_data",
-    # "link_fasih",
+    "sumber_data",
+    "link_fasih",
 ]
 
 STATUS_COLOR_MAP = {
