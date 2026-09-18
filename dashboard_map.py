@@ -107,7 +107,7 @@ st.markdown(
 # ============================================================
 # KONSTANTA
 # ============================================================
-DATA_FILE = Path(__file__).with_name("Map.xlsx")
+DATA_FILE = Path(__file__).with_name("Data.xlsx")
 
 REQUIRED_COLUMNS = [
     "rn",
